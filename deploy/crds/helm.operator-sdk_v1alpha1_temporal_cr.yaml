@@ -1,0 +1,267 @@
+apiVersion: helm.operator-sdk/v1alpha1
+kind: Temporal
+metadata:
+  name: example-temporal
+spec:
+  # Default values copied from <project_dir>/helm-charts/temporal/values.yaml
+  
+  admintools:
+    enabled: true
+    image:
+      pullPolicy: IfNotPresent
+      repository: temporalio/admin-tools
+      tag: 1.4.1
+    service:
+      annotations: {}
+      port: 22
+      type: ClusterIP
+  cassandra:
+    config:
+      cluster_size: 3
+      heap_new_size: 128M
+      max_heap_size: 512M
+      num_tokens: 4
+      ports:
+        cql: 9042
+      seed_size: 0
+    enabled: true
+    image:
+      pullPolicy: IfNotPresent
+      repo: cassandra
+      tag: 3.11.3
+    persistence:
+      enabled: false
+    service:
+      type: ClusterIP
+  debug: false
+  elasticsearch:
+    enabled: true
+    host: elasticsearch-master-headless
+    imageTag: 6.8.8
+    password: ""
+    persistence:
+      enabled: false
+    port: 9200
+    replicas: 3
+    scheme: http
+    username: ""
+    visibilityIndex: temporal-visibility-dev
+  fullnameOverride: ""
+  grafana:
+    dashboardProviders:
+      dashboardproviders.yaml:
+        apiVersion: 1
+        providers:
+        - disableDeletion: false
+          editable: true
+          folder: ""
+          name: default
+          options:
+            path: /var/lib/grafana/dashboards/default
+          orgId: 1
+          type: file
+    dashboards:
+      default:
+        clusteroverview-github:
+          datasource: TemporalMetrics
+          url: https://raw.githubusercontent.com/temporalio/temporal-dashboards/master/dashboards/10000.json
+        common-github:
+          datasource: TemporalMetrics
+          url: https://raw.githubusercontent.com/temporalio/temporal-dashboards/master/dashboards/common.json
+        frontend-github:
+          datasource: TemporalMetrics
+          url: https://raw.githubusercontent.com/temporalio/temporal-dashboards/master/dashboards/frontend.json
+        history-github:
+          datasource: TemporalMetrics
+          url: https://raw.githubusercontent.com/temporalio/temporal-dashboards/master/dashboards/history.json
+        matching-github:
+          datasource: TemporalMetrics
+          url: https://raw.githubusercontent.com/temporalio/temporal-dashboards/master/dashboards/matching.json
+        temporal-github:
+          datasource: TemporalMetrics
+          url: https://raw.githubusercontent.com/temporalio/temporal-dashboards/master/dashboards/temporal.json
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        datasources:
+        - access: proxy
+          isDefault: true
+          name: TemporalMetrics
+          type: prometheus
+          url: http://{{ .Release.Name }}-prometheus-server
+    enabled: true
+    rbac:
+      create: false
+      namespaced: true
+      pspEnabled: false
+    replicas: 1
+    testFramework:
+      enabled: false
+  kafka:
+    enabled: true
+  mysql:
+    enabled: false
+  nameOverride: ""
+  prometheus:
+    enabled: true
+    nodeExporter:
+      enabled: false
+  schema:
+    setup:
+      backoffLimit: 100
+      enabled: true
+    update:
+      backoffLimit: 100
+      enabled: true
+  server:
+    additionalVolumeMounts: []
+    additionalVolumes: []
+    affinity: {}
+    config:
+      logLevel: debug,info
+      numHistoryShards: 512
+      persistence:
+        default:
+          cassandra:
+            consistency:
+              default:
+                consistency: local_quorum
+                serialConsistency: local_serial
+            existingSecret: ""
+            hosts: []
+            keyspace: temporal
+            password: password
+            replicationFactor: 1
+            user: user
+          driver: cassandra
+          sql:
+            database: temporal
+            driver: mysql
+            existingSecret: ""
+            host: mysql
+            maxConnLifetime: 1h
+            maxConns: 20
+            password: temporal
+            port: 3306
+            secretName: ""
+            user: temporal
+        visibility:
+          cassandra:
+            consistency:
+              default:
+                consistency: local_quorum
+                serialConsistency: local_serial
+            existingSecret: ""
+            hosts: []
+            keyspace: temporal_visibility
+            password: password
+            replicationFactor: 1
+            user: user
+          driver: cassandra
+          sql:
+            database: temporal_visibility
+            driver: mysql
+            existingSecret: ""
+            host: mysql
+            maxConnLifetime: 1h
+            maxConns: 20
+            password: temporal
+            port: 3306
+            secretName: ""
+            user: temporal
+    enabled: true
+    frontend:
+      affinity: {}
+      metrics:
+        annotations:
+          enabled: true
+        prometheus: {}
+        serviceMonitor: {}
+      nodeSelector: {}
+      podAnnotations: {}
+      resources: {}
+      service:
+        port: 7233
+        type: ClusterIP
+      tolerations: []
+    history:
+      affinity: {}
+      metrics:
+        annotations:
+          enabled: true
+        prometheus: {}
+        serviceMonitor: {}
+      nodeSelector: {}
+      podAnnotations: {}
+      resources: {}
+      service:
+        port: 7934
+      tolerations: []
+    image:
+      pullPolicy: IfNotPresent
+      repository: temporalio/server
+      tag: 1.4.1
+    kafka:
+      host: null
+    matching:
+      affinity: {}
+      metrics:
+        annotations:
+          enabled: false
+        prometheus: {}
+        serviceMonitor: {}
+      nodeSelector: {}
+      podAnnotations: {}
+      resources: {}
+      service:
+        port: 7935
+      tolerations: []
+    metrics:
+      annotations:
+        enabled: true
+      prometheus:
+        timerType: histogram
+      serviceMonitor:
+        enabled: false
+        interval: 30s
+        metricRelabelings: []
+    nodeSelector: {}
+    podAnnotations: {}
+    replicaCount: 1
+    resources: {}
+    tolerations: []
+    worker:
+      affinity: {}
+      metrics:
+        annotations:
+          enabled: true
+        prometheus: {}
+        serviceMonitor: {}
+      nodeSelector: {}
+      podAnnotations: {}
+      resources: {}
+      service:
+        port: 7239
+      tolerations: []
+  web:
+    affinity: {}
+    enabled: true
+    image:
+      pullPolicy: IfNotPresent
+      repository: temporalio/web
+      tag: 1.4.0
+    ingress:
+      annotations: {}
+      enabled: false
+      hosts:
+      - /
+      tls: []
+    nodeSelector: {}
+    replicaCount: 1
+    resources: {}
+    service:
+      annotations: {}
+      port: 8088
+      type: ClusterIP
+    tolerations: []
+  

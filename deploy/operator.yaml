@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: temporial-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: temporial-operator
+  template:
+    metadata:
+      labels:
+        name: temporial-operator
+    spec:
+      serviceAccountName: temporial-operator
+      containers:
+        - name: temporial-operator
+          # Replace this with the built image name
+          image: REPLACE_IMAGE
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "temporial-operator"

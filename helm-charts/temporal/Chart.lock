@@ -1,0 +1,18 @@
+dependencies:
+- name: cassandra
+  repository: https://kubernetes-charts-incubator.storage.googleapis.com/
+  version: 0.14.3
+- name: prometheus
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 11.0.4
+- name: elasticsearch
+  repository: https://helm.elastic.co
+  version: 7.6.2
+- name: kafka
+  repository: https://charts.bitnami.com/bitnami
+  version: 7.2.9
+- name: grafana
+  repository: https://grafana.github.io/helm-charts
+  version: 5.0.10
+digest: sha256:728896968f4b86aa82e004d8ee6101167ee5d9b1dab5b39e06df3e90a7e07d55
+generated: "2020-12-21T11:53:01.667847+08:00"
