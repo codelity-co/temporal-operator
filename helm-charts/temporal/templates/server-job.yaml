@@ -135,7 +135,7 @@ spec:
         {{- end }}
       {{- with $.Values.server.additionalVolumes }}
       volumes:
-        {{- toYaml . | nident 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with $.$.Values.imagePullSecrets }}
       imagePullSecrets:
