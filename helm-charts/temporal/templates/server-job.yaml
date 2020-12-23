@@ -100,9 +100,44 @@ spec:
             - name: CASSANDRA_PASSWORD
               value: {{ $storeConfig.cassandra.password }}
             {{- end }}
+            {{- else if eq (include "temporal.persistence.driver" (list $ $store)) "postgres" }}
+            - name: DB
+              value: postgresql
+            - name: DB_PORT
+              value: {{ $storeConfig.sql.port }}
+            - name: POSTGRES_USER
+              value: {{ $storeConfig.sql.user }}
+            {{- if $storeConfig.sql.password }}
+            - name: POSTGRES_PWD
+              value: {{ $storeConfig.sql.password }}
+            {{- end }} 
+            - name: POSTGRES_SEEDS
+              value: {{ $storeConfig.sql.host }} 
+
+            {{- if $storeConfig.sql.tls.enabled }}
+            - name: SQL_TLS
+              value: {{ $storeConfig.sql.tls.enabled }} 
+            - name: SQL_TLS_CA_FILE
+              value: {{ $storeConfig.sql.tls.caFile }}
+            - name: SQL_TLS_CERT_FILE
+              value: {{ $storeConfig.sql.tls.certFile }}
+            - name: SQL_TLS_KEY_FILE
+              value: {{ $storeConfig.sql.tls.keyFile }}
             {{- end }}
+
+            {{- end }}
+
+          {{- with $.Values.server.additionalVolumeMounts}}
+          volumnMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          
         {{- end }}
-      {{- with $.Values.imagePullSecrets }}
+      {{- with $.Values.server.additionalVolumes }}
+      volumes:
+        {{- toYaml . | nident 8 }}
+      {{- end }}
+      {{- with $.$.Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
