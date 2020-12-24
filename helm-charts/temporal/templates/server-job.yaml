@@ -100,7 +100,9 @@ spec:
             - name: CASSANDRA_PASSWORD
               value: {{ $storeConfig.cassandra.password }}
             {{- end }}
-            {{- else if eq (include "temporal.persistence.driver" (list $ $store)) "postgres" }}
+            {{- else }}
+            {{- if eq (include "temporal.persistence.driver" (list $ $store)) "sql" }}
+            {{- if eq $storeConfig.sql.driver "postgres"}}
             - name: DB
               value: postgresql
             - name: DB_PORT
@@ -124,7 +126,8 @@ spec:
             - name: SQL_TLS_KEY_FILE
               value: {{ $storeConfig.sql.tls.keyFile }}
             {{- end }}
-
+            {{- end }}
+            {{- end }}
             {{- end }}
 
           {{- with $.Values.server.additionalVolumeMounts}}
