@@ -106,7 +106,7 @@ spec:
             - name: DB
               value: postgresql
             - name: DB_PORT
-              value: {{ $storeConfig.sql.port }}
+              value: {{- printf "%d" $storeConfig.sql.port -}}
             - name: POSTGRES_USER
               value: {{ $storeConfig.sql.user }}
             {{- if $storeConfig.sql.password }}
