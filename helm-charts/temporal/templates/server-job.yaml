@@ -103,22 +103,24 @@ spec:
             {{- else }}
             {{- if eq (include "temporal.persistence.driver" (list $ $store)) "sql" }}
             {{- if eq $storeConfig.sql.driver "postgres"}}
-            - name: DB
+            - name: SQL_PLUGIN
               value: postgresql
-            - name: DB_PORT
-              value: {{- printf "%d" $storeConfig.sql.port -}}
-            - name: POSTGRES_USER
+            - name: SQL_PORT
+              value: "{{ $storeConfig.sql.port }}"
+            - name: SQL_DATABASE
+              value: {{ $storeConfig.sql.database }}
+            - name: SQL_USER
               value: {{ $storeConfig.sql.user }}
             {{- if $storeConfig.sql.password }}
-            - name: POSTGRES_PWD
+            - name: SQL_PASSWORD
               value: {{ $storeConfig.sql.password }}
             {{- end }} 
-            - name: POSTGRES_SEEDS
+            - name: SQL_HOST
               value: {{ $storeConfig.sql.host }} 
 
             {{- if $storeConfig.sql.tls.enabled }}
             - name: SQL_TLS
-              value: {{ $storeConfig.sql.tls.enabled }} 
+              value: "{{ $storeConfig.sql.tls.enabled }}"
             - name: SQL_TLS_CA_FILE
               value: {{ $storeConfig.sql.tls.caFile }}
             - name: SQL_TLS_CERT_FILE
