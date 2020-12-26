@@ -102,9 +102,8 @@ spec:
             {{- end }}
             {{- else }}
             {{- if eq (include "temporal.persistence.driver" (list $ $store)) "sql" }}
-            {{- if eq $storeConfig.sql.driver "postgres"}}
             - name: SQL_PLUGIN
-              value: postgresql
+              value: {{ $storeConfig.sql.driver }}
             - name: SQL_PORT
               value: "{{ $storeConfig.sql.port }}"
             - name: SQL_DATABASE
@@ -127,7 +126,6 @@ spec:
               value: {{ $storeConfig.sql.tls.certFile }}
             - name: SQL_TLS_KEY_FILE
               value: {{ $storeConfig.sql.tls.keyFile }}
-            {{- end }}
             {{- end }}
             {{- end }}
             {{- end }}
@@ -231,9 +229,8 @@ spec:
             {{- end }}
             {{- else }}
             {{- if eq (include "temporal.persistence.driver" (list $ $store)) "sql" }}
-            {{- if eq $storeConfig.sql.driver "postgres"}}
             - name: SQL_PLUGIN
-              value: postgresql
+              value: {{ $storeConfig.sql.driver }}
             - name: SQL_PORT
               value: "{{ $storeConfig.sql.port }}"
             - name: SQL_DATABASE
@@ -256,7 +253,6 @@ spec:
               value: {{ $storeConfig.sql.tls.certFile }}
             - name: SQL_TLS_KEY_FILE
               value: {{ $storeConfig.sql.tls.keyFile }}
-            {{- end }}
             {{- end }}
             {{- else }}
               []
