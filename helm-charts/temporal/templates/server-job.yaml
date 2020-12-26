@@ -208,6 +208,10 @@ spec:
           {{- if eq (include "temporal.persistence.driver" (list $ $store)) "cassandra" }}
           # args: ["temporal-cassandra-tool", "update-schema", "-d", "/etc/temporal/schema/cassandra/{{ include "temporal.persistence.schema" $store }}/versioned"]
           args: ['sh', '-c', 'temporal-cassandra-tool update-schema -d /etc/temporal/schema/cassandra/{{ include "temporal.persistence.schema" $store }}/versioned']
+          {{- else }}
+          {{- if eq $storeConfig.sql.driver "postgres"}}
+          args: ['sh', '-c', 'temporal-sql-tool update-schema -d /etc/temporal/schema/postgresql/v96/{{ include "temporal.persistence.schema" $store }}/versioned']
+          {{- end }}
           {{- end }}
           env:
             {{- if eq (include "temporal.persistence.driver" (list $ $store)) "cassandra" }}
@@ -226,7 +230,37 @@ spec:
               value: {{ $storeConfig.cassandra.password }}
             {{- end }}
             {{- else }}
+            {{- if eq (include "temporal.persistence.driver" (list $ $store)) "sql" }}
+            {{- if eq $storeConfig.sql.driver "postgres"}}
+            - name: SQL_PLUGIN
+              value: postgresql
+            - name: SQL_PORT
+              value: "{{ $storeConfig.sql.port }}"
+            - name: SQL_DATABASE
+              value: {{ $storeConfig.sql.database }}
+            - name: SQL_USER
+              value: {{ $storeConfig.sql.user }}
+            {{- if $storeConfig.sql.password }}
+            - name: SQL_PASSWORD
+              value: {{ $storeConfig.sql.password }}
+            {{- end }} 
+            - name: SQL_HOST
+              value: {{ $storeConfig.sql.host }} 
+
+            {{- if $storeConfig.sql.tls.enabled }}
+            - name: SQL_TLS
+              value: "{{ $storeConfig.sql.tls.enabled }}"
+            - name: SQL_TLS_CA_FILE
+              value: {{ $storeConfig.sql.tls.caFile }}
+            - name: SQL_TLS_CERT_FILE
+              value: {{ $storeConfig.sql.tls.certFile }}
+            - name: SQL_TLS_KEY_FILE
+              value: {{ $storeConfig.sql.tls.keyFile }}
+            {{- end }}
+            {{- end }}
+            {{- else }}
               []
+            {{- end }}
             {{- end }}
         {{- end }}
 {{- end }}
