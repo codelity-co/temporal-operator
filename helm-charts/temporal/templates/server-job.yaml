@@ -41,6 +41,9 @@ spec:
       {{- end }}
     spec:
       restartPolicy: "OnFailure"
+      {{- if $.Values.schema.setup.serviceAccount }}
+      serviceAccount: {{ $.Values.schema.setup.serviceAccount }}
+      {{- end }}
       initContainers:
         {{- if or .Values.cassandra.enabled }}
         {{- if .Values.cassandra.enabled }}
@@ -193,6 +196,9 @@ spec:
       {{- end }}
     spec:
       restartPolicy: "OnFailure"
+      {{- if $.Values.schema.update.serviceAccount }}
+      serviceAccount: {{ $.Values.schema.update.serviceAccount }}
+      {{- end }}
       initContainers:
         {{- if .Values.cassandra.enabled }}
         - name: check-cassandra-service
