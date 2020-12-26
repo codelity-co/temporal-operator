@@ -35,6 +35,10 @@ spec:
         app.kubernetes.io/version: {{ .Chart.AppVersion | replace "+" "_" }}
         app.kubernetes.io/component: database
         app.kubernetes.io/part-of: {{ .Chart.Name }}
+      {{- with $.Values.schema.setup.podAnnotations}}
+      annotations: 
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       restartPolicy: "OnFailure"
       initContainers:
@@ -183,6 +187,10 @@ spec:
         app.kubernetes.io/version: {{ .Chart.AppVersion | replace "+" "_" }}
         app.kubernetes.io/component: database
         app.kubernetes.io/part-of: {{ .Chart.Name }}
+      {{- with $.Values.schema.update.podAnnotations}}
+      annotations: 
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       restartPolicy: "OnFailure"
       initContainers:
