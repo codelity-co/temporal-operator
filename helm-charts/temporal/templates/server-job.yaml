@@ -109,6 +109,11 @@ spec:
             {{- end }}
             {{- else }}
             {{- if eq (include "temporal.persistence.driver" (list $ $store)) "sql" }}
+            {{- if $.Values.schema.setup.env }}
+            {{- with $.Values.schema.setup.env }}
+            {{ toYaml . | nindent 12}}
+            {{- end }}
+            {{- else }}
             - name: SQL_PLUGIN
               value: {{ $storeConfig.sql.driver }}
             - name: SQL_PORT
@@ -133,6 +138,7 @@ spec:
               value: {{ $storeConfig.sql.tls.certFile }}
             - name: SQL_TLS_KEY_FILE
               value: {{ $storeConfig.sql.tls.keyFile }}
+            {{- end }}
             {{- end }}
             {{- end }}
             {{- end }}
@@ -243,6 +249,11 @@ spec:
             {{- end }}
             {{- else }}
             {{- if eq (include "temporal.persistence.driver" (list $ $store)) "sql" }}
+            {{- if $.Values.schema.update.env }}
+            {{- with $.Values.schema.update.env }}
+            {{ toYaml . | nindent 12 }}
+            {{- end }}
+            {{- else }}
             - name: SQL_PLUGIN
               value: {{ $storeConfig.sql.driver }}
             - name: SQL_PORT
@@ -267,6 +278,7 @@ spec:
               value: {{ $storeConfig.sql.tls.certFile }}
             - name: SQL_TLS_KEY_FILE
               value: {{ $storeConfig.sql.tls.keyFile }}
+            {{- end }}
             {{- end }}
             {{- else }}
               []
