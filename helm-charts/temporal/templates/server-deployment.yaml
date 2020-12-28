@@ -1,7 +1,7 @@
 {{- if $.Values.server.enabled }}
 {{- range $service := (list "frontend" "history" "matching" "worker") }}
 {{- $serviceValues := index $.Values.server $service -}}
-{{- if $serviceValues.enable }}
+{{- if $serviceValues.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
