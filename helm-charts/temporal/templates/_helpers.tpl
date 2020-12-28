@@ -342,3 +342,13 @@ The first Cassandra host in the stateful set.
 {{- printf "%s-kafka-headless:9092" .Release.Name -}}
 {{- end -}}
 {{- end -}}
+
+
+{{- define "temporal.schema.env" -}}
+{{- $global := index . 0 -}}
+{{- $setup := index . 1 -}}
+{{- $store := index . 2 -}}
+{{- $setupConfig := index $global.Values.schema $setup -}}
+{{- $storeConfig := index $setupConfig.stores $store -}}
+{{- $storeConfig.env -}}
+{{- end -}}

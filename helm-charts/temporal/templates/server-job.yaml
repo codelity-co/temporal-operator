@@ -109,9 +109,10 @@ spec:
             {{- end }}
             {{- else }}
             {{- if eq (include "temporal.persistence.driver" (list $ $store)) "sql" }}
-            {{- if $.Values.schema.setup.stores }}
-            {{- with $.Values.schema.setup.stores }}
-            {{ toYaml $store.env | nindent 12}}
+            {{- if (include "temporal.schema.env" (list $ "setup" $store)) }}
+            {{- with (include "temporal.schema.env" (list $ "setup" $store)) }}
+            {{ toYaml . | nindent 12}}
+            {{- end }}
             {{- end }}
             {{- else }}
             - name: SQL_PLUGIN
@@ -249,9 +250,10 @@ spec:
             {{- end }}
             {{- else }}
             {{- if eq (include "temporal.persistence.driver" (list $ $store)) "sql" }}
-            {{- if $.Values.schema.update.stores }}
-            {{- with $.Values.schema.update.stores }}
-            {{ toYaml $store.env | nindent 12 }}
+            {{- if (include "temporal.schema.env" (list $ "update" $store)) }}
+            {{- with (include "temporal.schema.env" (list $ "update" $store)) }}
+            {{ toYaml . | nindent 12}}
+            {{- end }}
             {{- end }}
             {{- else }}
             - name: SQL_PLUGIN
