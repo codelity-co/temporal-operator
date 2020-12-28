@@ -35,10 +35,6 @@ spec:
         app.kubernetes.io/version: {{ .Chart.AppVersion | replace "+" "_" }}
         app.kubernetes.io/component: database
         app.kubernetes.io/part-of: {{ .Chart.Name }}
-      {{- with $.Values.schema.setup.podAnnotations}}
-      annotations: 
-        {{ toYaml . | nindent 8 }}
-      {{- end }}
     spec:
       restartPolicy: "OnFailure"
       {{- if $.Values.schema.setup.serviceAccount }}
@@ -109,10 +105,9 @@ spec:
             {{- end }}
             {{- else }}
             {{- if eq (include "temporal.persistence.driver" (list $ $store)) "sql" }}
-            {{- if (include "temporal.schema.env" (list $ "setup" $store)) }}
-            {{- with (include "temporal.schema.env" (list $ "setup" $store)) }}
-            {{ toYaml . | nindent 12}}
-            {{- end }}
+            {{- if $.Values.schema.setup.stores }}
+            {{- $schemaStore := index $.Values.schema.setup.stores $store }}
+            {{- toYaml $schemaStore.env }}
             {{- end }}
             {{- else }}
             - name: SQL_PLUGIN
@@ -142,19 +137,25 @@ spec:
             {{- end }}
             {{- end }}
 
+          {{- if $.Values.server.additionalVolumeMounts}}
           {{- with $.Values.server.additionalVolumeMounts}}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- end }}
           
         {{- end }}
+      {{- if $.Values.server.additionalVolumes }}
       {{- with $.Values.server.additionalVolumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- end }}
+      {{- if $.Values.imagePullSecrets }}
       {{- with $.Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- end }}
 {{- end }}
 {{- if .Values.schema.update.enabled }}
@@ -194,10 +195,6 @@ spec:
         app.kubernetes.io/version: {{ .Chart.AppVersion | replace "+" "_" }}
         app.kubernetes.io/component: database
         app.kubernetes.io/part-of: {{ .Chart.Name }}
-      {{- with $.Values.schema.update.podAnnotations}}
-      annotations: 
-        {{ toYaml . | nindent 8 }}
-      {{- end }}
     spec:
       restartPolicy: "OnFailure"
       {{- if $.Values.schema.update.serviceAccount }}
@@ -247,10 +244,9 @@ spec:
             {{- end }}
             {{- else }}
             {{- if eq (include "temporal.persistence.driver" (list $ $store)) "sql" }}
-            {{- if (include "temporal.schema.env" (list $ "update" $store)) }}
-            {{- with (include "temporal.schema.env" (list $ "update" $store)) }}
-            {{ toYaml . | nindent 12 }}
-            {{- end }}
+            {{- if $.Values.schema.update.stores }}
+            {{- $schemaStore := index $.Values.schema.update.stores $store }}
+            {{ toYaml $schemaStore.env | nindent 12 }}
             {{- end }}
             {{- else }}
             - name: SQL_PLUGIN
