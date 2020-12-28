@@ -129,7 +129,6 @@ spec:
             {{- end }} 
             - name: SQL_HOST
               value: {{ $storeConfig.sql.host }} 
-
             {{- if $storeConfig.sql.tls.enabled }}
             - name: SQL_TLS
               value: "{{ $storeConfig.sql.tls.enabled }}"
@@ -139,7 +138,6 @@ spec:
               value: {{ $storeConfig.sql.tls.certFile }}
             - name: SQL_TLS_KEY_FILE
               value: {{ $storeConfig.sql.tls.keyFile }}
-            {{- end }}
             {{- end }}
             {{- end }}
             {{- end }}
@@ -158,10 +156,9 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-
----
 {{- end }}
 {{- if .Values.schema.update.enabled }}
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -252,7 +249,7 @@ spec:
             {{- if eq (include "temporal.persistence.driver" (list $ $store)) "sql" }}
             {{- if (include "temporal.schema.env" (list $ "update" $store)) }}
             {{- with (include "temporal.schema.env" (list $ "update" $store)) }}
-            {{ toYaml . | nindent 12}}
+            {{ toYaml . | nindent 12 }}
             {{- end }}
             {{- end }}
             {{- else }}
@@ -282,10 +279,8 @@ spec:
               value: {{ $storeConfig.sql.tls.keyFile }}
             {{- end }}
             {{- end }}
-            {{- else }}
-              []
-            {{- end }}
             {{- end }}
         {{- end }}
+
 {{- end }}
 {{- end }}
